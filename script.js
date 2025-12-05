@@ -74,14 +74,14 @@ try {
         const users = snap.val() || {};
         const count = Object.keys(users).length;
 
-        // Update Count UI
-        const countEl = document.getElementById("online-number");
+        // Update Count Header in Floating Bubble
+        const countEl = document.getElementById("floating-count");
         if (countEl) {
             countEl.innerText = count;
         }
 
-        // Update List UI
-        const listEl = document.getElementById("online-user-list");
+        // Update List UI in Floating Bubble
+        const listEl = document.getElementById("floating-list-content");
         if (listEl) {
             listEl.innerHTML = '';
 
@@ -107,11 +107,10 @@ try {
                 // Highlight myself
                 if (myConRef && user.id === myConRef.key) {
                     div.style.fontWeight = "bold";
-                    div.style.color = "#4ade80"; // Greenish
+                    div.style.color = "#4ade80";
                     displayName += " (Sen)";
                 }
 
-                // Protect against XSS by using textContent
                 div.textContent = displayName;
                 listEl.appendChild(div);
             });

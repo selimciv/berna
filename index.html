@@ -41,19 +41,21 @@
                 <div class="teacher-name">Berna Fergana Civelek</div>
                 <div class="app-info">V05.12.2025.16 &copy; 2024</div>
 
-                <details id="online-users-container" style="margin-top: 10px; cursor: pointer;">
-                    <summary style="font-weight: bold; color: #4ade80; list-style: none;">
-                        <span class="online-dot">●</span> <span id="online-number">...</span> Online (Listeyi Gör)
-                    </summary>
-                    <div id="online-user-list" class="online-user-list">
-                        <!-- List loaded here -->
-                    </div>
-                </details>
-
                 <button class="contact-btn" onclick="toggleContact()">İletişime Geç</button>
                 <div id="contact-info" class="telegram-id">Telegram: @selimciv</div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Floating Online User Bubble -->
+    <div id="floating-user-list" class="floating-user-list">
+        <div class="floating-header">
+            <span class="online-dot">●</span>
+            <span id="floating-count">0</span> Online
+        </div>
+        <div id="floating-list-content" class="floating-list-content">
+            <!-- Users injected here -->
         </div>
     </div>
 

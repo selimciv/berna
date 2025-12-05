@@ -1165,3 +1165,99 @@ header {
         padding: 1.5vh;
     }
 }
+
+/* Floating User List Bubble */
+.floating-user-list {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    /* User asked for "chat bubble", putting it left based on typical game UI or right? Let's go Left bottom to avoid blocking game controls usually on right or center. Or right. Standard chat is bottom right. Let's stick to Right as per my plan or maybe Left? User image showed empty bottom. Let's go Bottom Left to separate from "Contact" button usually on right or center. Wait, contact is in footer. Let's go LEFT. */
+    width: 200px;
+    background: rgba(20, 20, 20, 0.8);
+    /* Darker for better contrast */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    /* Greenish border */
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    font-family: 'Outfit', sans-serif;
+    color: white;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.floating-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4ade80;
+    /* Green text */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+}
+
+.floating-list-content {
+    max-height: 25vh;
+    /* Responsive height */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 2px;
+}
+
+/* Scrollbar styling */
+.floating-list-content::-webkit-scrollbar {
+    width: 3px;
+}
+
+.floating-list-content::-webkit-scrollbar-thumb {
+    background: rgba(74, 222, 128, 0.3);
+    border-radius: 4px;
+}
+
+.online-user-item {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.online-user-item::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: #4ade80;
+    border-radius: 50%;
+}
+
+@media (max-width: 600px) {
+    .floating-user-list {
+        bottom: 10px;
+        left: 10px;
+        width: 160px;
+        font-size: 0.7rem;
+    }
+}
