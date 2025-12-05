@@ -11,10 +11,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 try {
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database(); // Auto-detects URL from config or use default
+    // Explicitly defines the databaseURL to avoid region detection issues
+    const configWithUrl = {
+        ...firebaseConfig,
+        databaseURL: "https://berna-18cec-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(configWithUrl);
+    const db = firebase.database();
+
+    console.log("Firebase initialized. Connecting...");
+
     // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
-    // Standard URL: https://<project-id>-default-rtdb.firebaseio.com
     // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
 
     // Presence Logic
@@ -45,6 +52,7 @@ try {
 
     connectedRef.on("value", (snap) => {
         if (snap.val() === true) {
+            console.log("Connected to Firebase!");
             // We're connected (or reconnected)!
 
             // Generate a random ID if not exists or use simple push
@@ -55,6 +63,8 @@ try {
 
             // Set initial state
             updateMyPresence();
+        } else {
+            console.warn("Disconnected from Firebase.");
         }
     });
 
