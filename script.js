@@ -1,3 +1,24 @@
+// VISUAL CONSOLE FOR DEBUGGING
+var consoleDiv = document.createElement('div');
+consoleDiv.style.cssText = 'position:fixed;top:0;right:0;width:50%;height:150px;background:rgba(0,0,0,0.7);color:lime;font-size:10px;overflow-y:scroll;z-index:9999;pointer-events:none;padding:5px;';
+document.body.appendChild(consoleDiv);
+
+function logToScreen(msg) {
+    var p = document.createElement('div');
+    p.textContent = "> " + msg;
+    consoleDiv.appendChild(p);
+    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+}
+
+window.onerror = function (msg, url, line) {
+    logToScreen("ERR: " + msg + " @" + line);
+};
+
+var originalLog = console.log;
+console.log = function (msg) { logToScreen(msg); originalLog(msg); };
+console.error = function (msg) { logToScreen("ERR: " + msg); originalLog(msg); };
+
+logToScreen("App Started. iOS Compat Mode.");
 
 var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
@@ -108,6 +129,7 @@ try {
     }
 
     // Count Online Users & Render List
+    // Count Online Users & Render List
     connectionsRef.on("value", (snap) => {
         const users = snap.val() || {};
         const count = Object.keys(users).length;
@@ -115,7 +137,6 @@ try {
         // Update Count Header in Floating Bubble
         const headerEl = document.querySelector(".floating-header");
         if (headerEl) {
-            // Restore proper HTML structure with count
             headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
             headerEl.style.color = "#4ade80";
         }
@@ -125,36 +146,39 @@ try {
         if (listEl) {
             listEl.innerHTML = '';
 
-            // Convert to array
-            // Compatibility: Use Object.keys instead of Object.values for older Safari
-            let userList = Object.keys(users).map(function (key) { return users[key]; });
+            if (users) {
+                console.log("Presence update. Users: " + count);
 
-            // Sort: My self first, then others alphabetically
-            userList.sort((a, b) => {
-                const isMeA = (myConRef && a.id === myConRef.key);
-                const isMeB = (myConRef && b.id === myConRef.key);
+                // Compatibility: Use Object.keys instead of Object.values for older Safari
+                let userList = Object.keys(users).map(function (key) { return users[key]; });
 
-                if (isMeA && !isMeB) return -1;
-                if (!isMeA && isMeB) return 1;
-                return (a.name || "").localeCompare(b.name || "");
-            });
+                // Sort: My self first, then others alphabetically
+                userList.sort((a, b) => {
+                    const isMeA = (myConRef && a.id === myConRef.key);
+                    const isMeB = (myConRef && b.id === myConRef.key);
 
-            userList.forEach(user => {
-                const div = document.createElement("div");
-                div.className = "online-user-item";
+                    if (isMeA && !isMeB) return -1;
+                    if (!isMeA && isMeB) return 1;
+                    return (a.name || "").localeCompare(b.name || "");
+                });
 
-                let displayName = user.name || "Unknown";
+                userList.forEach(user => {
+                    const div = document.createElement("div");
+                    div.className = "online-user-item";
 
-                // Highlight myself
-                if (myConRef && user.id === myConRef.key) {
-                    div.style.fontWeight = "bold";
-                    div.style.color = "#4ade80";
-                    displayName += " (Sen)";
-                }
+                    let displayName = user.name || "Unknown";
 
-                div.textContent = displayName;
-                listEl.appendChild(div);
-            });
+                    // Highlight myself
+                    if (myConRef && user.id === myConRef.key) {
+                        div.style.fontWeight = "bold";
+                        div.style.color = "#4ade80";
+                        displayName += " (Sen)";
+                    }
+
+                    div.textContent = displayName;
+                    listEl.appendChild(div);
+                });
+            }
         }
     }, (error) => {
         console.error("Connections Read Error:", error);
