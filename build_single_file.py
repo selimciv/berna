@@ -1,4 +1,5 @@
 import os
+import datetime
 import base64
 import re
 
@@ -61,12 +62,25 @@ def build():
     with open(index_path, 'r', encoding='utf-8') as f:
         html_content = f.read()
 
-    # Extract Version
-    # Looking for <div class="app-info">V05.12.2025.14 &copy; 2024</div>
-    version_match = re.search(r'<div class="app-info">\s*(V[\d\.]+)', html_content)
-    if version_match:
-        version = version_match.group(1)
-        print(f"Found version: {version}")
+    # Automatic Version Update
+    now = datetime.datetime.now()
+    # Format: VDD.MM.YYYY.HH.MM
+    new_version = f"V{now.strftime('%d.%m.%Y.%H.%M')}"
+    
+    # Update version in HTML content (looking for existing V...)
+    # Pattern matches: <div class="app-info"> V...
+    version_pattern = re.compile(r'(<div class="app-info">\s*)(V[\d\.]+)')
+    
+    if version_pattern.search(html_content):
+        # Update the HTML content in memory
+        html_content = version_pattern.sub(fr'\g<1>{new_version}', html_content)
+        
+        # Write back to index.html to persist the change check
+        with open(index_path, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+            
+        print(f"Updated index.html version to: {new_version}")
+        version = new_version
         output_filename = f'Berna_VGC_{version}.html'
     else:
         print("Warning: Version not found, using default name.")
