@@ -24,6 +24,7 @@ var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
     authDomain: "bernavocab.firebaseapp.com",
     databaseURL: "https://bernavocab-default-rtdb.europe-west1.firebasedatabase.app",
+    experimentalForceLongPolling: true, // Force long polling for older devices/networks
     projectId: "bernavocab",
     storageBucket: "bernavocab.firebasestorage.app",
     messagingSenderId: "234781292902",
