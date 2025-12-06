@@ -2382,10 +2382,7 @@ var gameData = {
 
 </script>
     <script>
-window.onerror = function (msg, url, lineNo, columnNo, error) {
-    alert("System Error: " + msg + " Line: " + lineNo);
-    return false;
-};
+
 var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
     authDomain: "bernavocab.firebaseapp.com",
@@ -2417,18 +2414,6 @@ try {
     const db = firebase.database();
 
     console.log("Firebase initialized. Connecting...");
-
-    // Diagnostic Timeout - Check the flag, not the UI
-    setTimeout(() => {
-        if (!isFirebaseConnected) {
-            const headerEl = document.querySelector(".floating-header");
-            if (headerEl) {
-                headerEl.innerText = "BAĞLANTI YOK";
-                headerEl.style.color = "red";
-            }
-            alert("BAĞLANTI BAŞARISIZ:\n5 saniyedir sunucu ile iletişim kurulamadı.\n\n1. İnternetinizi kontrol edin.\n2. Sayfayı yenileyin.");
-        }
-    }, 5000);
 
     // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
     // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
