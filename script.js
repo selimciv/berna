@@ -137,6 +137,7 @@ try {
         }
 
         // Update List UI in Floating Bubble
+        const listEl = document.getElementById("floating-list-content");
         if (listEl) {
             listEl.innerHTML = '';
 
