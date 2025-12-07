@@ -37,6 +37,18 @@ try {
     const connectedRef = db.ref(".info/connected");
     const connectionsRef = db.ref("connections");
 
+    // Location Logic
+    let userCity = "";
+    fetch("https://ipapi.co/json/")
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data && data.city) {
+                userCity = data.city;
+                if (window.updateMyPresence) window.updateMyPresence();
+            }
+        })
+        .catch(function (err) { console.log("Loc err:", err); });
+
     // Shakespeare Character Names
     const shakespeareNames = [
         "Hamlet", "Macbeth", "Othello", "Romeo", "Juliet", "King Lear", "Viola",
@@ -75,7 +87,12 @@ try {
             if (headerEl) {
                 headerEl.style.color = "#4ade80";
             }
-            // We're connected (or reconnected)!
+
+            // Fix Duplicate Issue: Remove old ref if exists before pushing new one
+            if (myConRef) {
+                myConRef.onDisconnect().cancel();
+                myConRef.remove();
+            }
 
             // Generate a random ID if not exists or use simple push
             myConRef = connectionsRef.push();
@@ -101,10 +118,11 @@ try {
 
         myConRef.set({
             name: myName,
+            city: userCity || "", // Add City
             id: myConRef.key, // Save key to identify myself in list
             onlineAt: firebase.database.ServerValue.TIMESTAMP
         });
-    }
+    };
 
     // Count Online Users & Render List
     // Count Online Users & Render List
@@ -125,7 +143,7 @@ try {
             listEl.innerHTML = '';
 
             if (users) {
-                console.log("Presence update. Users: " + count);
+                // console.log("Presence update. Users: " + count);
 
                 // Compatibility: Use Object.keys instead of Object.values for older Safari
                 let userList = Object.keys(users).map(function (key) { return users[key]; });
@@ -145,6 +163,7 @@ try {
                     div.className = "online-user-item";
 
                     let displayName = user.name || "Unknown";
+                    if (user.city) displayName += " (" + user.city + ")";
 
                     // Highlight myself
                     if (myConRef && user.id === myConRef.key) {
@@ -1101,10 +1120,11 @@ function openHomeworkControl() {
         document.getElementById('homework-modal').style.display = 'flex';
         renderClassSelector();
     };
-    openPasswordModal();
+    openPasswordModal("Öğretmen Girişi");
 }
 
-function openPasswordModal() {
+function openPasswordModal(title) {
+    if (title) document.querySelector("#password-modal h3").innerText = title;
     document.getElementById('teacher-password').value = "";
     document.getElementById('password-modal').style.display = 'flex';
     var input = document.getElementById('teacher-password');
@@ -1401,15 +1421,13 @@ function loadPreviousHomeworks(className, highlightNewest) {
 }
 
 function confirmEditHomework(hwId) {
-    // console.log("Edit requested for:", hwId);
     pendingAction = function () { loadHomeworkForEdit(hwId); };
-    openPasswordModal();
+    openPasswordModal("Düzenlemek İçin Şifre Girin");
 }
 
 function confirmDeleteHomework(hwId) {
-    // console.log("Delete requested for:", hwId);
     pendingAction = function () { deleteHomework(hwId); };
-    openPasswordModal();
+    openPasswordModal("Silmek İçin Şifre Girin");
 }
 
 function deleteHomework(hwId) {
