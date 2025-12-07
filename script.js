@@ -159,6 +159,9 @@ try {
                 });
 
                 userList.forEach(user => {
+                    // Filter out stale sessions of myself (same name, diff ID)
+                    if (myConRef && user.name === myName && user.id !== myConRef.key) return;
+
                     const div = document.createElement("div");
                     div.className = "online-user-item";
 
@@ -1123,13 +1126,20 @@ function openHomeworkControl() {
     openPasswordModal("Öğretmen Girişi");
 }
 
-function openPasswordModal(title) {
-    if (title) document.querySelector("#password-modal h3").innerText = title;
+window.openPasswordModal = function (title) {
+    if (title) {
+        var h3 = document.querySelector("#password-modal h3");
+        if (h3) h3.innerText = title;
+    }
+
+    var modal = document.getElementById('password-modal');
+    if (!modal) return;
+
     document.getElementById('teacher-password').value = "";
-    document.getElementById('password-modal').style.display = 'flex';
+    modal.style.display = 'flex';
     var input = document.getElementById('teacher-password');
-    input.focus();
-    // Remove old listeners to prevent duplicates if any (though unlikely with this structure, safe practice)
+    setTimeout(function () { input.focus(); }, 100);
+
     input.onkeydown = function (e) {
         if (e.key === 'Enter') checkTeacherPassword();
     };
@@ -1411,8 +1421,8 @@ function loadPreviousHomeworks(className, highlightNewest) {
             div.innerHTML = `
                 <span>${item.val.date} - <b>${item.val.name}</b></span> 
                 <span>
-                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}" onclick="confirmEditHomework(this.getAttribute('data-id'))">Düzenle</button>
-                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}" onclick="confirmDeleteHomework(this.getAttribute('data-id'))">Sil</button>
+                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}" onclick="window.confirmEditHomework(this.getAttribute('data-id'))">Düzenle</button>
+                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}" onclick="window.confirmDeleteHomework(this.getAttribute('data-id'))">Sil</button>
                 </span>
             `;
             container.appendChild(div);
@@ -1420,12 +1430,14 @@ function loadPreviousHomeworks(className, highlightNewest) {
     });
 }
 
-function confirmEditHomework(hwId) {
+window.confirmEditHomework = function (hwId) {
+    if (!hwId) { alert("Hata: Ödev ID eksik."); return; }
     pendingAction = function () { loadHomeworkForEdit(hwId); };
     openPasswordModal("Düzenlemek İçin Şifre Girin");
 }
 
-function confirmDeleteHomework(hwId) {
+window.confirmDeleteHomework = function (hwId) {
+    if (!hwId) { alert("Hata: Ödev ID eksik."); return; }
     pendingAction = function () { deleteHomework(hwId); };
     openPasswordModal("Silmek İçin Şifre Girin");
 }
