@@ -13,10 +13,78 @@ var firebaseConfig = {
 
 // Global Error Handler for Debugging (Alert only for critical, or remove if annoying)
 window.onerror = function (msg, url, lineNo, columnNo, error) {
-    // alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo); // Comment out to be less intrusive
+    alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo); // Enabled for user feedback
     console.error(msg, lineNo);
     return false;
 };
+
+// ... inside script ...
+
+// Count Online Users & Render List
+connectionsRef.on("value", (snap) => {
+    try {
+        const users = snap.val() || {};
+        const count = Object.keys(users).length;
+
+        // ... (header update) ...
+        // Copy paste header update logic or keep it if I can match lines easily.
+        // Since I am replacing the block, I must include it.
+
+        const headerEl = document.querySelector(".floating-header");
+        if (headerEl) {
+            headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
+            headerEl.style.color = "#4ade80";
+        }
+
+        const listEl = document.getElementById("floating-list-content");
+        if (listEl) {
+            listEl.innerHTML = '';
+
+            if (users) {
+                let userList = Object.keys(users).map(function (key) { return users[key]; });
+                // Sort newer first
+                userList.sort((a, b) => b.onlineAt - a.onlineAt);
+
+                const processedNames = new Set();
+                const finalDisplayList = [];
+
+                userList.forEach(user => {
+                    if (user.name && processedNames.has(user.name)) return;
+                    if (user.name) processedNames.add(user.name);
+                    finalDisplayList.push(user);
+                });
+
+                finalDisplayList.sort((a, b) => {
+                    const isMeA = (a.name === myName);
+                    const isMeB = (b.name === myName);
+                    if (isMeA && !isMeB) return -1;
+                    if (!isMeA && isMeB) return 1;
+                    return (a.name || "").localeCompare(b.name || "");
+                });
+
+                finalDisplayList.forEach(user => {
+                    const div = document.createElement("div");
+                    div.className = "online-user-item";
+                    let displayName = user.name || "Unknown";
+                    if (user.city) displayName += " (" + user.city + ")";
+                    if (user.name === myName) {
+                        div.style.fontWeight = "bold";
+                        div.style.color = "#4ade80";
+                        displayName += " (Sen)";
+                    }
+                    div.textContent = displayName;
+                    listEl.appendChild(div);
+                });
+            }
+        }
+    } catch (e) {
+        console.error("Online List Error:", e);
+    }
+}, (error) => {
+    console.error("Connections Read Error:", error);
+});
+
+
 
 // Check if Firebase is loaded
 if (typeof firebase === 'undefined') {
@@ -1428,35 +1496,19 @@ function loadPreviousHomeworks(className, highlightNewest) {
                 div.classList.add("flash-item");
             }
 
-            // Use data attributes and event listeners
+            // Inline onclick for robustness against re-renders
+            // Note: we use quote escaping for security but keys are usually safe.
             div.innerHTML = `
                 <span>${item.val.date} - <b>${item.val.name}</b></span> 
                 <span>
-                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}">Düzenle</button>
-                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}">Sil</button>
+                    <button type="button" class="hw-action-btn edit-btn" onclick="window.confirmEditHomework('${item.key}')">Düzenle</button>
+                    <button type="button" class="hw-action-btn del-btn" onclick="window.confirmDeleteHomework('${item.key}')">Sil</button>
                 </span>
             `;
             container.appendChild(div);
         });
 
-        // Attach listeners safely
-        container.querySelectorAll('.edit-btn').forEach(function (btn) {
-            btn.onclick = function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var id = this.getAttribute('data-id');
-                window.confirmEditHomework(id);
-            };
-        });
-
-        container.querySelectorAll('.del-btn').forEach(function (btn) {
-            btn.onclick = function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var id = this.getAttribute('data-id');
-                window.confirmDeleteHomework(id);
-            };
-        });
+        // No extra listeners needed
     });
 }
 
