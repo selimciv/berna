@@ -1,24 +1,3 @@
-// VISUAL CONSOLE FOR DEBUGGING
-var consoleDiv = document.createElement('div');
-consoleDiv.style.cssText = 'position:fixed;top:0;right:0;width:50%;height:150px;background:rgba(0,0,0,0.7);color:lime;font-size:10px;overflow-y:scroll;z-index:9999;pointer-events:none;padding:5px;';
-document.body.appendChild(consoleDiv);
-
-function logToScreen(msg) {
-    var p = document.createElement('div');
-    p.textContent = "> " + msg;
-    consoleDiv.appendChild(p);
-    consoleDiv.scrollTop = consoleDiv.scrollHeight;
-}
-
-window.onerror = function (msg, url, line) {
-    logToScreen("ERR: " + msg + " @" + line);
-};
-
-var originalLog = console.log;
-console.log = function (msg) { logToScreen(msg); originalLog(msg); };
-console.error = function (msg) { logToScreen("ERR: " + msg); originalLog(msg); };
-
-logToScreen("App Started. iOS Compat Mode.");
 
 var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
@@ -32,9 +11,10 @@ var firebaseConfig = {
     measurementId: "G-048H1LQCC0"
 };
 
-// Global Error Handler for Debugging
+// Global Error Handler for Debugging (Alert only for critical, or remove if annoying)
 window.onerror = function (msg, url, lineNo, columnNo, error) {
-    alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo);
+    // alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo); // Comment out to be less intrusive
+    console.error(msg, lineNo);
     return false;
 };
 
@@ -52,26 +32,6 @@ try {
     const db = firebase.database();
 
     console.log("Firebase initialized. Connecting...");
-
-    // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
-    // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
-
-    // DIAGNOSTIC: Check raw HTTP access to Firebase
-    // This bypasses the SDK and checks if the phone allows the connection at all.
-    var checkUrl = "https://bernavocab-default-rtdb.europe-west1.firebasedatabase.app/.json?shallow=true";
-    logToScreen("Testing raw fetch to: " + checkUrl);
-
-    fetch(checkUrl).then(function (res) {
-        logToScreen("Fetch Result: " + res.status + " " + res.statusText);
-        if (res.ok) {
-            logToScreen("HTTP Access OK! Issue is SDK.");
-        } else {
-            logToScreen("HTTP Access Blocked: " + res.status);
-        }
-    }).catch(function (err) {
-        logToScreen("FETCH FAILED: " + err.message);
-        logToScreen("Likely SSL or Network Block.");
-    });
 
     // Presence Logic
     const connectedRef = db.ref(".info/connected");
@@ -1516,13 +1476,6 @@ function generateReportControls() {
         var btn = document.createElement('button');
         btn.className = "filter-btn";
         btn.innerText = cls;
-        btn.style.marginLeft = "5px";
-        btn.style.padding = "5px 10px";
-        btn.style.background = "rgba(255,255,255,0.1)";
-        btn.style.border = "none";
-        btn.style.borderRadius = "4px";
-        btn.style.color = "white";
-        btn.style.cursor = "pointer";
 
         btn.onclick = function () {
             window.filterReport(cls);
