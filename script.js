@@ -137,32 +137,33 @@ try {
         }
 
         // Update List UI in Floating Bubble
-        const listEl = document.getElementById("floating-list-content");
         if (listEl) {
             listEl.innerHTML = '';
 
             if (users) {
-                // console.log("Presence update. Users: " + count);
-
-                // Compatibility: Use Object.keys instead of Object.values for older Safari
                 let userList = Object.keys(users).map(function (key) { return users[key]; });
-
-                // Sort: newer first (to handle duplicates easily)
+                // Sort: newer first
                 userList.sort((a, b) => b.onlineAt - a.onlineAt);
 
                 const processedNames = new Set();
                 const finalDisplayList = [];
 
                 userList.forEach(user => {
-                    // If I have seen this name before, skip it (it's an older session of the same user)
-                    // This works because we sorted by time descending.
-                    if (user.name && processedNames.has(user.name)) return;
+                    const normName = (user.name || "").trim().toLowerCase();
+                    if (normName && processedNames.has(normName)) return; // Strict dedupe
 
-                    if (user.name) processedNames.add(user.name);
+                    if (normName) processedNames.add(normName);
                     finalDisplayList.push(user);
                 });
 
-                // Re-sort alphabetically for display, but keep Me at top
+                // Update count based on FILTERED list
+                const headerEl = document.querySelector(".floating-header");
+                if (headerEl) {
+                    // Note: We update header here again with correct count
+                    const count = finalDisplayList.length;
+                    headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
+                }
+
                 finalDisplayList.sort((a, b) => {
                     const isMeA = (a.name === myName);
                     const isMeB = (b.name === myName);
@@ -174,17 +175,13 @@ try {
                 finalDisplayList.forEach(user => {
                     const div = document.createElement("div");
                     div.className = "online-user-item";
-
                     let displayName = user.name || "Unknown";
                     if (user.city) displayName += " (" + user.city + ")";
-
-                    // Highlight myself
                     if (user.name === myName) {
                         div.style.fontWeight = "bold";
                         div.style.color = "#4ade80";
                         displayName += " (Sen)";
                     }
-
                     div.textContent = displayName;
                     listEl.appendChild(div);
                 });
@@ -1147,6 +1144,7 @@ window.openPasswordModal = function (title) {
 
     document.getElementById('teacher-password').value = "";
     modal.style.display = 'flex';
+    modal.style.zIndex = "99999"; // Ensure it is on top of everything
     var input = document.getElementById('teacher-password');
     setTimeout(function () { input.focus(); }, 100);
 
