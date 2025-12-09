@@ -279,6 +279,19 @@ function setGameMode(mode) {
         // Ensure Unit 1 is active
         const btns = container.querySelectorAll('.level-btn');
         // changeLevel handles active class, but let's be safe
+    } else if (mode === 'ydt') {
+        // Create buttons for Units 1-10
+        for (let i = 1; i <= 10; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'level-btn';
+            btn.innerText = `Unit ${i}`;
+            // Store specific level ID
+            const lvlId = `YDT_Unit${i}`;
+            btn.dataset.level = lvlId;
+            btn.onclick = () => changeLevel(lvlId);
+            container.appendChild(btn);
+        }
+        changeLevel('YDT_Unit1'); // Load first unit
     }
     // History API for TV Back Button
     try {
