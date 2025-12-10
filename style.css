@@ -3605,3 +3605,407 @@ header {
 .taboo-home-btn:hover {
     transform: scale(1.05);
 }
+
+/* =========================================
+   MOBILE RESPONSIVE IMPROVEMENTS
+   ========================================= */
+
+/* Mobile: 768px and below */
+@media (max-width: 768px) {
+
+    /* Landing Page */
+    .landing-page {
+        padding: 15px;
+    }
+
+    .landing-content {
+        padding: 20px;
+    }
+
+    .landing-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .landing-content p {
+        font-size: 1rem;
+    }
+
+    .landing-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .landing-btn {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+
+    /* Game Mode Selection */
+    .game-mode-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .game-mode-card {
+        padding: 20px 15px;
+    }
+
+    .game-mode-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .game-mode-card p {
+        font-size: 0.85rem;
+    }
+
+    .mode-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Play Type Selection */
+    .play-type-grid {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .play-type-card {
+        width: 100%;
+        max-width: 300px;
+        padding: 25px;
+    }
+
+    /* Unit Selection */
+    .unit-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .unit-card {
+        padding: 15px 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Taboo Game - Mobile Layout */
+    .taboo-container {
+        padding: 1vh 2vw;
+    }
+
+    .taboo-top-panel {
+        margin-bottom: 1vh;
+    }
+
+    .taboo-timer {
+        font-size: 6vh;
+        padding: 0.5vh 3vw;
+    }
+
+    .taboo-main-area {
+        flex-direction: column;
+        gap: 2vh;
+    }
+
+    .taboo-card-wrapper {
+        max-width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .taboo-card {
+        padding: 2vh 3vw;
+        min-height: auto;
+    }
+
+    .taboo-main-word {
+        font-size: 4vh;
+        margin-bottom: 1.5vh;
+        padding-bottom: 1.5vh;
+    }
+
+    .taboo-forbidden-list {
+        gap: 1vh;
+    }
+
+    .taboo-forbidden-item {
+        font-size: 2.5vh;
+        padding: 0.8vh;
+    }
+
+    .taboo-right-controls {
+        flex-direction: row;
+        justify-content: center;
+        gap: 3vw;
+    }
+
+    .taboo-control-btn {
+        width: auto;
+        flex: 1;
+        max-width: 200px;
+        padding: 2vh 3vw;
+        font-size: 2vh;
+    }
+
+    .taboo-bottom-panel {
+        flex: 0 0 12vh;
+        gap: 1.5vw;
+        flex-wrap: wrap;
+    }
+
+    .team-score-btn {
+        flex: 1 1 45%;
+        max-width: 48%;
+        min-width: 80px;
+    }
+
+    .team-label {
+        font-size: 1.6vh;
+    }
+
+    .team-score {
+        font-size: 3vh;
+        padding: 0.3vh 1.5vw;
+    }
+
+    .taboo-game-over h2 {
+        font-size: 5vh;
+        margin-bottom: 2vh;
+    }
+
+    #taboo-final-scores {
+        flex-wrap: wrap;
+        gap: 2vw;
+    }
+
+    .final-score-box {
+        flex: 1 1 40%;
+        padding: 1.5vh 2vw;
+    }
+
+    /* Back/Home Navigation Buttons */
+    .top-right-nav {
+        top: 5px;
+        right: 5px;
+        gap: 5px;
+    }
+
+    .back-to-modes-btn,
+    .top-right-home-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Modal Windows */
+    .modal-content {
+        width: 95%;
+        max-width: 95vw;
+        max-height: 90vh;
+        padding: 15px;
+        margin: 10px;
+    }
+
+    /* Homework System */
+    .student-row {
+        flex-wrap: wrap;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .status-buttons {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .status-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Score Board */
+    .score-board {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .team-score-display {
+        min-width: 70px;
+        padding: 8px;
+    }
+
+    /* Wheel Container */
+    .wheel-container {
+        padding: 10px;
+    }
+
+    #wheel-canvas {
+        max-width: 80vw;
+        max-height: 40vh;
+    }
+
+    /* Millionaire Container */
+    .millionaire-container {
+        padding: 10px;
+    }
+
+    .prize-ladder {
+        font-size: 0.7rem;
+    }
+
+    .question-display {
+        font-size: 1rem;
+        padding: 15px;
+    }
+
+    .answer-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .answer-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Hangman */
+    .hangman-container {
+        padding: 10px;
+    }
+
+    #hangman-canvas {
+        max-width: 250px;
+        max-height: 250px;
+    }
+
+    .keyboard {
+        gap: 5px;
+    }
+
+    .key-btn {
+        min-width: 28px;
+        padding: 8px 5px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Small Mobile: 480px and below */
+@media (max-width: 480px) {
+
+    /* Landing Page */
+    .landing-content h1 {
+        font-size: 1.4rem;
+    }
+
+    .landing-content p {
+        font-size: 0.9rem;
+    }
+
+    .landing-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Game Mode */
+    .mode-icon {
+        font-size: 2rem;
+    }
+
+    .game-mode-card h3 {
+        font-size: 1rem;
+    }
+
+    /* Taboo - Extra Small Screens */
+    .taboo-timer {
+        font-size: 5vh;
+    }
+
+    .taboo-main-word {
+        font-size: 3.5vh;
+    }
+
+    .taboo-forbidden-item {
+        font-size: 2vh;
+    }
+
+    .taboo-control-btn {
+        font-size: 1.8vh;
+        padding: 1.5vh 2vw;
+    }
+
+    .team-score-btn {
+        flex: 1 1 48%;
+    }
+
+    .taboo-game-over h2 {
+        font-size: 4vh;
+    }
+
+    .taboo-restart-btn {
+        font-size: 2.5vh;
+        padding: 1.5vh 3vw;
+    }
+
+    /* Unit Selection */
+    .unit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .unit-card {
+        font-size: 0.8rem;
+        padding: 12px 8px;
+    }
+
+    /* Modals */
+    .modal-content h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Keyboard */
+    .key-btn {
+        min-width: 24px;
+        padding: 6px 4px;
+        font-size: 0.8rem;
+    }
+
+    /* Homework */
+    .student-row {
+        font-size: 0.85rem;
+    }
+
+    .hw-input {
+        font-size: 1rem;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .taboo-container {
+        padding: 0.5vh 2vw;
+    }
+
+    .taboo-timer {
+        font-size: 5vh;
+    }
+
+    .taboo-main-area {
+        flex-direction: row;
+    }
+
+    .taboo-card {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .taboo-bottom-panel {
+        flex: 0 0 10vh;
+    }
+
+    .landing-content {
+        padding: 10px;
+    }
+
+    .landing-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
