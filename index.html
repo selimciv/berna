@@ -224,51 +224,54 @@
 
     <!-- Question Modal -->
     <div id="question-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content new-card-style">
+            <!-- Points Badge (Top Left) -->
+            <div class="modal-points-badge" id="modal-points-badge">20</div>
+
+            <!-- Close Button (Top Right) -->
             <button type="button" class="close-btn" onclick="closeModal()" aria-label="Close Modal">&times;</button>
-            <div id="modal-timer" class="modal-timer">25</div>
-            <h2 id="modal-category" style="color: #aaa; margin-bottom: 10px;">Category</h2>
-            <h3 id="modal-points" style="color: #ffcc00; margin-bottom: 20px;">100</h3>
 
-            <div class="modal-word-section">
-                <div id="modal-question" class="question-text">
-                    Question goes here...
-                </div>
-                <button class="audio-btn" id="audio-question" title="Play Question Audio"
-                    onclick="playAudio('question')">🔊</button>
+            <!-- Category and Question Number -->
+            <div class="modal-header-info">
+                <h2 id="modal-category" class="modal-category-name">Category</h2>
+                <div id="modal-question-number" class="modal-question-number">1</div>
             </div>
 
-            <div class="modal-word-section">
-                <div id="modal-answer" class="answer-text">
-                    Answer goes here...
-                </div>
-
+            <!-- Main Word Section with Audio -->
+            <div class="modal-main-word">
+                <button class="modal-audio-btn" onclick="speakAnswer(event)">🔊</button>
+                <div id="modal-word" class="modal-word-text">Word</div>
             </div>
 
-            <div id="modal-pronunciation" class="pronunciation-text">
-                [ Pronunciation ]
-            </div>
+            <!-- Pronunciation -->
+            <div id="modal-pronunciation" class="modal-pronunciation-text">[ pronunciation ]</div>
 
-            <div class="modal-example-section" id="modal-example-section" style="display:none;">
-                <div class="example-sentence">
-                    <div class="example-label">Example:</div>
-                    <div id="modal-example-en" class="example-text"></div>
-                    <button class="audio-btn small" onclick="playAudio('example')">🔊</button>
-                </div>
-                <div class="example-sentence">
-                    <div class="example-label">Türkçe:</div>
-                    <div id="modal-example-tr" class="example-text-tr"></div>
+            <!-- Example Sentence Section (Hidden initially) -->
+            <div id="modal-example-section" class="modal-example-section" style="display:none;">
+                <div class="modal-example-line">
+                    <button class="modal-audio-btn-small" id="example-audio-btn"
+                        onclick="speakExample(event, '')">🔊</button>
+                    <div id="modal-example-en" class="modal-example-text">Example sentence goes here.</div>
                 </div>
             </div>
 
+            <!-- Show Answer Button -->
             <div class="modal-actions">
-                <button id="show-answer-btn" class="action-btn" onclick="showAnswer()">Show Answer</button>
-                <button id="correct-btn" class="action-btn success" style="display:none;">✅ Bildi</button>
-                <button id="wrong-btn" class="action-btn danger" style="display:none;">❌ Bilemedi</button>
+                <button id="show-answer-btn" class="show-answer-btn" onclick="showAnswer()">SHOW ANSWER</button>
             </div>
 
-            <div id="modal-teams" class="modal-teams" style="display:none;">
-                <!-- Team buttons will be injected here -->
+            <!-- Answer Section (Hidden until Show Answer is clicked) -->
+            <div id="modal-answer-section" class="modal-answer-section" style="display:none;">
+                <!-- Turkish Translation of Example -->
+                <div id="modal-example-tr" class="modal-answer-translation"></div>
+
+                <!-- Turkish Answer (Main Translation) -->
+                <div id="modal-answer" class="modal-answer-text"></div>
+
+                <!-- Team Selection Buttons -->
+                <div id="modal-teams" class="modal-teams">
+                    <!-- Team buttons will be injected here -->
+                </div>
             </div>
         </div>
     </div>

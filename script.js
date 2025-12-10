@@ -879,98 +879,88 @@ function openQuestion(catIndex, qIndex, cardElement) {
     const q = gameData.categories[catIndex].questions[qIndex];
     currentCardElement = cardElement;
 
-    // Populate Modal
+    // Populate Points Badge
+    const pointsBadge = document.getElementById('modal-points-badge');
+    pointsBadge.innerText = safeText(q.points);
+
+    // Populate Category and Question Number
     document.getElementById('modal-category').innerText = safeText(gameData.categories[catIndex].name);
-    const pointsHeader = document.getElementById('modal-points');
-    pointsHeader.innerText = safeText(q.points);
-    pointsHeader.style.visibility = 'visible'; // Reset visibility in case it was hidden
+    document.getElementById('modal-question-number').innerText = qIndex + 1;
 
-    // Handle Question Type (1=Text, 2=Image)
-    const questionContainer = document.getElementById('modal-question');
-    const answerContainer = document.getElementById('modal-answer');
-
-    let displayQuestion = q.question; // Default TR
-    let displayAnswer = q.answer;     // Default ENG
+    // Determine what to show based on language mode
+    let displayWord = q.answer;        // English word (default to show)
+    let displayTranslation = q.question; // Turkish translation
 
     if (currentLanguage === 'ENG') {
-        displayQuestion = q.answer;   // Show ENG
-        displayAnswer = q.question;   // Answer TR
-    }
-
-    // Inject Listen Button AND Pronunciation logic
-    // Inject Listen Button AND Pronunciation logic
-    const listenBtnHtml = `<button class="modern-listen-btn" onclick="speakAnswer(event)">🔊</button>`;
-    const pronunciationHtml = q.pronunciation ? `<div class="pronunciation-text" style="display:block; margin-top:10px; width:100%; text-align:center;">[${q.pronunciation}]</div>` : '';
-
-    // Helper to wrap content in centered column
-    const wrapContent = (btn, text, pron, exampleData) => {
-        let exampleHtml = '';
-        if (exampleData && exampleData.example) {
-            // Use same class 'modern-listen-btn' but maybe slightly smaller or just same
-            // User said "same as above". The above one is 50px.
-            // Let's use the same class but add a style to scale it down slightly if needed, or just keep it same.
-            // User said "üsttekiyle aynı olsun" (let it be the same as the one above).
-            // I will use the exact same class.
-            exampleHtml = `
-    <div class="example-container">
-                    <div class="example-line">
-                        <button class="small-listen-btn" onclick="speakExample(event, '${exampleData.example.replace(/'/g, "\\'")}')">🔊</button>
-                        <span class="example-text">${exampleData.example}</span>
-                    </div>
-    <div class="example-translation" style="display:none;">${exampleData.exampleTR || ''}</div>
-                </div>
-    `;
-        }
-
-        return `
-    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
-        <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-            ${btn}
-            <span>${text}</span>
-        </div>
-                ${pron}
-                ${exampleHtml}
-            </div>
-    `;
-    };
-
-    if (currentLanguage === 'ENG') {
-        // ENG Mode: Question is English. Show Listen + Word + Pronunciation + Example
-        const content = wrapContent(listenBtnHtml, formatContent(displayQuestion), pronunciationHtml, q);
-        questionContainer.innerHTML = content;
+        displayWord = q.answer;          // Show ENG as main word
+        displayTranslation = q.question; // TR as answer
     } else {
-        // TR Mode: Question is Turkish.
-        questionContainer.innerHTML = formatContent(displayQuestion);
+        displayWord = q.question;        // Show TR as main (question)
+        displayTranslation = q.answer;   // ENG as answer
     }
 
-    if (currentLanguage === 'TR') {
-        // TR Mode: Answer is English. Show Listen + Word + Pronunciation + Example
-        const content = wrapContent(listenBtnHtml, formatContent(displayAnswer), pronunciationHtml, q);
-        answerContainer.innerHTML = content;
+    // Populate Main Word
+    const wordElement = document.getElementById('modal-word');
+    wordElement.innerText = safeText(displayWord);
+
+    // Populate Pronunciation (show only in ENG mode or if showing English word)
+    const pronunciationElement = document.getElementById('modal-pronunciation');
+    if (q.pronunciation && currentLanguage === 'TR') {
+        // In TR mode, we show English word details
+        pronunciationElement.innerText = `[ ${q.pronunciation} ]`;
+        pronunciationElement.style.display = 'block';
     } else {
-        // ENG Mode: Answer is Turkish. Just text.
-        answerContainer.innerHTML = formatContent(displayAnswer);
+        pronunciationElement.style.display = 'none';
     }
 
-    answerContainer.style.display = 'none';
+    // Populate Example Section (show only if example exists)
+    const exampleSection = document.getElementById('modal-example-section');
+    const exampleTextElement = document.getElementById('modal-example-en');
+    const exampleAudioBtn = document.getElementById('example-audio-btn');
 
+    if (q.example) {
+        exampleTextElement.innerText = safeText(q.example);
+        // Store example text in button for onclick
+        exampleAudioBtn.setAttribute('onclick', `speakExample(event, '${q.example.replace(/'/g, "\\'")}')`);
+        exampleSection.style.display = 'block';
+    } else {
+        exampleSection.style.display = 'none';
+    }
+
+    // Hide Answer Section initially
+    const answerSection = document.getElementById('modal-answer-section');
+    answerSection.style.display = 'none';
+
+    // Populate answer section content (but keep hidden)
+    const answerTranslationElement = document.getElementById('modal-example-tr');
+    const answerTextElement = document.getElementById('modal-answer');
+
+    if (q.exampleTR) {
+        answerTranslationElement.innerText = safeText(q.exampleTR);
+    } else {
+        answerTranslationElement.innerText = '';
+    }
+
+    answerTextElement.innerText = safeText(displayTranslation);
+
+    // Show the Show Answer button
     document.getElementById('show-answer-btn').style.display = 'inline-block';
-
-    // Hide the old standalone pronunciation div as we injected it manually
-    document.getElementById('modal-pronunciation').style.display = 'none';
 
     // Show Modal
     document.getElementById('question-modal').style.display = 'flex';
 
-    // Start Timer
-    startTimer();
+    // Start Timer (if needed)
+    // startTimer();
 
     // Reset Team Buttons
-    document.getElementById('modal-teams').style.display = 'none';
     document.getElementById('modal-teams').innerHTML = '';
 
     // Add history state for modal
-    history.pushState({ modal: true }, "", "?modal=true");
+    try {
+        history.pushState({ modal: true }, "", "?modal=true");
+    } catch (e) {
+        console.warn("History API not available", e);
+    }
 
     // Auto-focus "Show Answer" button for easier navigation
     setTimeout(() => {
@@ -988,12 +978,12 @@ function formatContent(text) {
 }
 
 function showAnswer() {
-    document.getElementById('modal-answer').style.display = 'block';
+    // Hide the Show Answer button
     document.getElementById('show-answer-btn').style.display = 'none';
 
-    // Show Example Translation
-    const translations = document.querySelectorAll('.example-translation');
-    translations.forEach(el => el.style.display = 'block');
+    // Show the Answer Section
+    const answerSection = document.getElementById('modal-answer-section');
+    answerSection.style.display = 'block';
 
     // Auto-speak the English word THEN the sentence
     speakAnswerSequence();
@@ -1001,7 +991,6 @@ function showAnswer() {
     // Generate Team Scoring Buttons
     const teamsContainer = document.getElementById('modal-teams');
     teamsContainer.innerHTML = ''; // Clear previous
-    teamsContainer.style.display = 'flex';
 
     gameData.groupNames.forEach((name, index) => {
         const btn = document.createElement('button');
@@ -1011,7 +1000,8 @@ function showAnswer() {
         teamsContainer.appendChild(btn);
     });
 
-    stopTimer();
+    // Stop timer if running
+    // stopTimer();
 }
 
 function awardPointsToTeam(teamIndex) {
@@ -1022,20 +1012,19 @@ function awardPointsToTeam(teamIndex) {
 
     // 1. Get Coordinates
     const teamsContainer = document.getElementById('modal-teams');
-    // const clickedBtn = teamsContainer.children[teamIndex]; // Old source
-    const pointsHeader = document.getElementById('modal-points'); // New source
+    const pointsBadge = document.getElementById('modal-points-badge'); // Updated to new element
     const targetScore = document.getElementById(`score-${teamIndex}`);
 
-    const startRect = pointsHeader.getBoundingClientRect();
+    const startRect = pointsBadge.getBoundingClientRect();
     const endRect = targetScore.getBoundingClientRect();
 
     // 2. Create Flying Element (Simulate moving the actual element)
     const flyer = document.createElement('div');
     flyer.className = 'flying-points';
-    flyer.innerText = pointsHeader.innerText; // Use actual text from header
+    flyer.innerText = pointsBadge.innerText; // Use actual text from badge
 
-    // Match styles of the header to make it look like the same element
-    const computedStyle = window.getComputedStyle(pointsHeader);
+    // Match styles of the badge to make it look like the same element
+    const computedStyle = window.getComputedStyle(pointsBadge);
     flyer.style.color = computedStyle.color;
     flyer.style.fontSize = computedStyle.fontSize;
     flyer.style.fontWeight = computedStyle.fontWeight;
@@ -1049,7 +1038,7 @@ function awardPointsToTeam(teamIndex) {
     document.body.appendChild(flyer);
 
     // Hide the original element to create the illusion it moved
-    pointsHeader.style.visibility = 'hidden';
+    pointsBadge.style.visibility = 'hidden';
 
     // 3. Animate
     // Force reflow
@@ -2115,87 +2104,91 @@ let currentModalWord = null;
 function showWheelQuestion(word) {
     currentModalWord = word;
     const modal = document.getElementById('question-modal');
-    const question = document.getElementById('modal-question');
-    const answer = document.getElementById('modal-answer');
-    const pronunciation = document.getElementById('modal-pronunciation');
-    const showAnswerBtn = document.getElementById('show-answer-btn');
-    const correctBtn = document.getElementById('correct-btn');
-    const wrongBtn = document.getElementById('wrong-btn');
-    const modalTeams = document.getElementById('modal-teams');
-    const exampleSection = document.getElementById('modal-example-section');
-    const exampleEn = document.getElementById('modal-example-en');
-    const exampleTr = document.getElementById('modal-example-tr');
 
-    // Set question
+    // Populate Points Badge
+    const pointsBadge = document.getElementById('modal-points-badge');
+    pointsBadge.innerText = '10';
+
+    // Populate Category and Question Number
+    document.getElementById('modal-category').textContent = 'Wheel of Fortune';
+    // Calculate question number based on remaining words
+    const totalWords = gameData.levelData[selectedUnit] ?
+        gameData.levelData[selectedUnit].reduce((sum, cat) => sum + cat.pool.length, 0) : 0;
+    const wordsLeft = parseInt(document.getElementById('wheel-words-left')?.textContent || 0);
+    document.getElementById('modal-question-number').textContent = (totalWords - wordsLeft + 1) || 1;
+
+    // Determine what to show based on language mode
+    let displayWord = word.english;        // English word (default to show)
+    let displayTranslation = word.turkish || word.turkish_translation || '';
+
     if (currentLanguage === 'ENG') {
-        question.textContent = word.english;
-        answer.textContent = word.turkish || word.turkish_translation || '';
+        displayWord = word.english;
+        displayTranslation = word.turkish || word.turkish_translation || '';
     } else {
-        question.textContent = word.turkish || word.turkish_translation || '';
-        answer.textContent = word.english;
+        displayWord = word.turkish || word.turkish_translation || '';
+        displayTranslation = word.english;
     }
 
-    pronunciation.textContent = word.pronunciation ? `[${word.pronunciation}]` : '';
-    pronunciation.style.display = 'none'; // Hide initially
-    answer.style.display = 'none'; // Hide initially
+    // Populate Main Word
+    document.getElementById('modal-word').textContent = displayWord;
 
-    // Prepare example sentences (but keep hidden)
-    exampleEn.textContent = word.example || '';
-    exampleTr.textContent = word.exampleTR || '';
+    // Populate Pronunciation
+    const pronunciationElement = document.getElementById('modal-pronunciation');
+    if (word.pronunciation && currentLanguage === 'TR') {
+        pronunciationElement.textContent = `[ ${word.pronunciation} ]`;
+        pronunciationElement.style.display = 'block';
+    } else {
+        pronunciationElement.style.display = 'none';
+    }
 
-    exampleSection.style.display = 'none'; // Hide initially
+    // Populate Example Section
+    const exampleSection = document.getElementById('modal-example-section');
+    const exampleTextElement = document.getElementById('modal-example-en');
+    const exampleAudioBtn = document.getElementById('example-audio-btn');
 
-    // Update modal header
-    document.getElementById('modal-category').textContent = 'Wheel of Fortune';
-    document.getElementById('modal-points').textContent = '+10 Points';
+    if (word.example) {
+        exampleTextElement.textContent = word.example;
+        exampleAudioBtn.setAttribute('onclick', `speakExample(event, '${word.example.replace(/'/g, "\\'")}')`);
+        exampleSection.style.display = 'block';
+    } else {
+        exampleSection.style.display = 'none';
+    }
 
-    // Hide timer and teams
-    document.getElementById('modal-timer').style.display = 'none';
-    modalTeams.style.display = 'none';
+    // Populate answer section content (but keep hidden)
+    const answerSection = document.getElementById('modal-answer-section');
+    answerSection.style.display = 'none';
 
-    // Reset button states: Show "Show Answer", Hide others
-    showAnswerBtn.style.display = 'inline-block';
-    correctBtn.style.display = 'none';
-    wrongBtn.style.display = 'none';
+    document.getElementById('modal-example-tr').textContent = word.exampleTR || '';
+    document.getElementById('modal-answer').textContent = displayTranslation;
 
-    // Set Show Answer button click handler for Wheel mode
-    showAnswerBtn.onclick = revealWheelAnswer;
+    // Show the Show Answer button
+    document.getElementById('show-answer-btn').style.display = 'inline-block';
+    document.getElementById('show-answer-btn').onclick = revealWheelAnswer;
 
-
+    // Reset team buttons
+    document.getElementById('modal-teams').innerHTML = '';
 
     modal.style.display = 'flex';
 }
 
 function revealWheelAnswer() {
-    const answer = document.getElementById('modal-answer');
-    const pronunciation = document.getElementById('modal-pronunciation');
-    const exampleSection = document.getElementById('modal-example-section');
-    const showAnswerBtn = document.getElementById('show-answer-btn');
-    const correctBtn = document.getElementById('correct-btn');
-    const wrongBtn = document.getElementById('wrong-btn');
-    // Reveal content
-    answer.style.display = 'block';
-    pronunciation.style.display = 'block';
+    // Hide the Show Answer button
+    document.getElementById('show-answer-btn').style.display = 'none';
 
-    // Force reveal example section to ensure visibility
-    exampleSection.style.display = 'block';
-
-    // Switch buttons: Hide individual action buttons, show team selection
-    showAnswerBtn.style.display = 'none';
-    correctBtn.style.display = 'none';
-    wrongBtn.style.display = 'none';
+    // Show the Answer Section
+    const answerSection = document.getElementById('modal-answer-section');
+    answerSection.style.display = 'block';
 
     // Generate team buttons for Wheel mode
     const modalTeams = document.getElementById('modal-teams');
     modalTeams.innerHTML = '';
     gameData.groupNames.forEach((teamName, index) => {
         const btn = document.createElement('button');
-        btn.className = 'team-btn';
+        btn.className = 'team-select-btn';
         btn.textContent = teamName;
         btn.onclick = () => handleWheelTeamSelection(index);
         modalTeams.appendChild(btn);
     });
-    modalTeams.style.display = 'flex';
 
     // Auto-read: Word (English) -> Example (English)
     if (currentModalWord && currentModalWord.english) {
@@ -2203,8 +2196,7 @@ function revealWheelAnswer() {
         speakText(currentModalWord.english, () => {
             // Callback after word finishes
             if (currentModalWord.example) {
-                // Short pause then speak example (Do NOT cancel previous, though it's finished by callback time anyway)
-                // We use setTimeout for natural pause
+                // Short pause then speak example
                 setTimeout(() => {
                     speakText(currentModalWord.example, null, false);
                 }, 300);
