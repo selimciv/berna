@@ -1136,7 +1136,7 @@ function addIndividualPoints(points) {
     // Update scoreboard if visible
     updateIndividualScoreboard();
 
-    closeModal();
+    closeModal(true); // Skip history.back() to prevent navigation to homepage
 }
 
 // ========================================
@@ -1204,7 +1204,7 @@ function awardPointsToTeam(teamIndex) {
 
     // Close modal after short delay
     setTimeout(() => {
-        closeModal();
+        closeModal(true); // Skip history.back() to prevent navigation to homepage
     }, 300);
 }
 
@@ -2480,7 +2480,7 @@ function handleWheelTeamSelection(teamIndex) {
     window.pendingWheelWord = null;
     console.log("DEBUG: handleWheelTeamSelection - Cleared pendingWheelWord");
 
-    closeModal();
+    closeModal(true); // Skip history.back() to prevent navigation to homepage
 
     // Check if game over
     if (wheelWords.length === 0) {
