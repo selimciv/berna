@@ -2628,8 +2628,8 @@ function initMillionaireMode() {
     // Start first question
     showMillionaireQuestion();
 
-    // Start Suspense Music
-    MillionaireSounds.playSuspense();
+    // Background music disabled
+    // MillionaireSounds.playSuspense();
 
     // Set Game Active Flag
     isGameActive = true;
@@ -2803,40 +2803,14 @@ function playMillionaireAudioSequence(questionWord, options) {
     // Cancel any existing speech
     window.speechSynthesis.cancel();
 
-    // Part 1: "What is the meaning of..."
+    // Only read the question, not the options
     const questionUtterance = new SpeechSynthesisUtterance(`What is the meaning of ${questionWord}?`);
     questionUtterance.lang = 'en-US';
     questionUtterance.rate = 0.9;
 
-    questionUtterance.onend = () => {
-        // Part 2: Read options sequentially
-        let index = 0;
-
-        function speakNextOption() {
-            if (index >= options.length || !isGameActive) return; // Stop if game exited
-
-            // Check if game is still active logic could go here, but cancel() handles most cases
-
-            const letters = ['A', 'B', 'C', 'D'];
-            const optionText = options[index];
-            const optionUtterance = new SpeechSynthesisUtterance(`${letters[index]}. ${optionText}`);
-
-            // Guess language for option (usually Turkish in this game)
-            optionUtterance.lang = 'tr-TR';
-            optionUtterance.rate = 1.0;
-
-            optionUtterance.onend = () => {
-                index++;
-                setTimeout(speakNextOption, 300); // Small pause between options
-            };
-
-            window.speechSynthesis.speak(optionUtterance);
-        }
-
-        speakNextOption();
-    };
-
     window.speechSynthesis.speak(questionUtterance);
+
+    // Option voice-overs disabled
 }
 
 function generateWrongAnswers(correctAnswer) {
@@ -2907,7 +2881,7 @@ function checkMillionaireAnswer(selected, correct, btnElement) {
         setTimeout(() => {
             millionaireCurrentQuestion++;
             showMillionaireQuestion();
-            MillionaireSounds.playSuspense(); // Restart music for next question
+            // MillionaireSounds.playSuspense(); // Background music disabled
         }, 2000);
     } else {
         // Wrong - game over
