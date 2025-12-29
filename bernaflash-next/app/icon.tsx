@@ -19,20 +19,19 @@ export default function Icon() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #9d4edd 0%, #00d9ff 100%)',
-                    borderRadius: '6px',
+                    backgroundColor: '#9d4edd',
+                    borderRadius: '20%',
                 }}
             >
-                <div
+                <span
                     style={{
-                        fontSize: 24,
-                        fontWeight: 'bold',
+                        fontSize: '22px',
+                        fontWeight: 900,
                         color: 'white',
-                        fontFamily: 'Arial',
                     }}
                 >
                     B
-                </div>
+                </span>
             </div>
         ),
         {
