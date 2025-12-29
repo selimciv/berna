@@ -1384,6 +1384,33 @@ var gameData = {
                     { answer: "Invent", pronunciation: "İnvent", question: "İcat etmek", example: "Edison invented the light bulb.", exampleTR: "Edison ampulü icat etti." },
                 ]
             }
+        ],
+        Grade11_Unit1: [
+            {
+                name: "Future Plans & Dreams",
+                pool: [
+                    { answer: "Accomplish", pronunciation: "Ekampliş", question: "Başarmak", example: "I will accomplish my goals.", exampleTR: "Hedeflerimi başaracağım." },
+                    { answer: "Ambition", pronunciation: "Embişın", question: "Hırs/Tutku", example: "Her ambition is to be a doctor.", exampleTR: "Onun hırsı doktor olmaktır." },
+                    { answer: "Benefit", pronunciation: "Benıfit", question: "Fayda", example: "Exercise has many benefits.", exampleTR: "Egzersizin birçok faydası vardır." },
+                    { answer: "Challenge", pronunciation: "Çelınc", question: "Mücadele/Zorluk", example: "This exam is a big challenge.", exampleTR: "Bu sınav büyük bir zorluk." },
+                    { answer: "Determine", pronunciation: "Ditörmın", question: "Belirlemek/Kararlı olmak", example: "She is determined to win.", exampleTR: "Kazanmaya kararlı." },
+                    { answer: "Encourage", pronunciation: "Inkarıc", question: "Teşvik etmek", example: "My parents encourage me.", exampleTR: "Ailem beni teşvik eder." },
+                    { answer: "Failure", pronunciation: "Feylyır", question: "Başarısızlık", example: "Failure is part of success.", exampleTR: "Başarısızlık başarının bir parçasıdır." },
+                    { answer: "Graduate", pronunciation: "Grejuıyt", question: "Mezun olmak", example: "I will graduate next year.", exampleTR: "Gelecek yıl mezun olacağım." },
+                    { answer: "Inspire", pronunciation: "İnspayır", question: "İlham vermek", example: "His story inspires me.", exampleTR: "Hikayesi bana ilham veriyor." },
+                    { answer: "Opportunity", pronunciation: "Opırtuniti", question: "Fırsat", example: "Don't miss this opportunity.", exampleTR: "Bu fırsatı kaçırma." },
+                    { answer: "Passion", pronunciation: "Peşın", question: "Tutku", example: "Music is my passion.", exampleTR: "Müzik benim tutkum." },
+                    { answer: "Predict", pronunciation: "Pridikt", question: "Tahmin etmek", example: "Can you predict the future?", exampleTR: "Geleceği tahmin edebilir misin?" },
+                    { answer: "Qualified", pronunciation: "Kwolıfayd", question: "Nitelikli", example: "He is highly qualified.", exampleTR: "O çok nitelikli." },
+                    { answer: "Responsibility", pronunciation: "Rispansıbılıti", question: "Sorumluluk", example: "It is a big responsibility.", exampleTR: "Bu büyük bir sorumluluk." },
+                    { answer: "Success", pronunciation: "Sıkses", question: "Başarı", example: "Hard work brings success.", exampleTR: "Çok çalışmak başarı getirir." },
+                    { answer: "Talent", pronunciation: "Telınt", question: "Yetenek", example: "She has amazing talent.", exampleTR: "Harika bir yeteneği var." },
+                    { answer: "University", pronunciation: "Yunivörsiti", question: "Üniversite", example: "I want to go to university.", exampleTR: "Üniversiteye gitmek istiyorum." },
+                    { answer: "Victory", pronunciation: "Viktıri", question: "Zafer", example: "We celebrated our victory.", exampleTR: "Zaferimizi kutladık." },
+                    { answer: "Wealth", pronunciation: "Welth", question: "Zenginlik/Varlık", example: "Health is better than wealth.", exampleTR: "Sağlık zenginlikten iyidir." },
+                    { answer: "Wisdom", pronunciation: "Wizdım", question: "Bilgelik", example: "He is known for his wisdom.", exampleTR: "Bilgeliğiyle tanınır." }
+                ]
+            }
         ]
     }
 };
