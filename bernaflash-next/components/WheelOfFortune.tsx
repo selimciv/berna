@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
+import { speak } from '@/lib/textToSpeech';
 import GlassCard from './GlassCard';
 
 interface WheelOfFortuneProps {
@@ -13,16 +14,19 @@ interface WheelOfFortuneProps {
 export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFortuneProps) {
     const [currentQuestion, setCurrentQuestion] = useState<any>(null);
     const [teams, setTeams] = useState([
-        { name: 'Team A', score: 0, color: 'bg-blue-500' },
-        { name: 'Team B', score: 0, color: 'bg-green-500' },
-        { name: 'Team C', score: 0, color: 'bg-yellow-500' },
-        { name: 'Team D', score: 0, color: 'bg-red-500' },
+        { name: 'Team A', score: 0, color: 'bg-blue-500', jokers: 3 },
+        { name: 'Team B', score: 0, color: 'bg-green-500', jokers: 3 },
+        { name: 'Team C', score: 0, color: 'bg-yellow-500', jokers: 3 },
+        { name: 'Team D', score: 0, color: 'bg-red-500', jokers: 3 },
     ]);
     const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
     const [spinning, setSpinning] = useState(false);
     const [rotation, setRotation] = useState(0);
     const [showAnswer, setShowAnswer] = useState(false);
     const [segments, setSegments] = useState<any[]>([]);
+
+    // Timer State
+    const [timeLeft, setTimeLeft] = useState(30);
 
     const categories = vocabulary?.levelData?.[level] || [];
     const allWords = categories.flatMap((cat: any) => cat.pool || []);
@@ -31,6 +35,31 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
     useEffect(() => {
         logGameActivity('Wheel of Fortune', level);
     }, []);
+
+    // Timer Logic
+    useEffect(() => {
+        if (!currentQuestion || showAnswer || timeLeft <= 0) return;
+
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    // Time's up! Return to spin screen
+                    setCurrentQuestion(null);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [currentQuestion, showAnswer, timeLeft]);
+
+    // Reset timer when a new question is shown
+    useEffect(() => {
+        if (currentQuestion) {
+            setTimeLeft(30);
+        }
+    }, [currentQuestion]);
 
     // Colors for segments - Expanded Palette for better variety
     const SEGMENT_COLORS = [
@@ -60,6 +89,7 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
 
         setSpinning(true);
         setShowAnswer(false);
+        setTimeLeft(30); // Ensure timer is reset before spinning starts (or when question appears)
 
         // Pick a random winner
         const winnerIndex = Math.floor(Math.random() * segments.length);
@@ -100,19 +130,7 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
         }, 3500);
     };
 
-    const speak = (text: string, callback?: () => void) => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.onend = () => {
-                if (callback) callback();
-            };
-            window.speechSynthesis.speak(utterance);
-        } else if (callback) {
-            callback();
-        }
-    };
+
 
     const handleShowAnswer = () => {
         setShowAnswer(true);
@@ -123,6 +141,15 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
                 }, 500);
             });
         }
+    };
+
+    const handleJokerClick = (teamIndex: number) => {
+        setTeams(prev => prev.map((team, idx) => {
+            if (idx === teamIndex && team.jokers > 0) {
+                return { ...team, jokers: team.jokers - 1 };
+            }
+            return team;
+        }));
     };
 
     if (allWords.length === 0) {
@@ -152,11 +179,28 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
                 {teams.map((team, idx) => (
                     <div
                         key={idx}
-                        className={`flex-1 ${team.color} rounded-lg md:rounded-xl p-2 md:p-3 text-center transition-all ${selectedTeam === idx ? 'ring-4 ring-white shadow-xl scale-105' : 'opacity-90'
+                        className={`flex-1 ${team.color} rounded-lg md:rounded-xl p-2 md:p-3 text-center transition-all relative group ${selectedTeam === idx ? 'ring-4 ring-white shadow-xl scale-105' : 'opacity-90'
                             }`}
                     >
                         <div className="text-white text-xs md:text-sm font-bold">{team.name}</div>
                         <div className="text-white text-xl md:text-3xl font-bold">{team.score}</div>
+
+                        {/* Joker Button */}
+                        {team.jokers > 0 && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleJokerClick(idx);
+                                }}
+                                className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-purple-600 text-white border-2 border-white shadow-lg flex items-center justify-center font-bold text-xl hover:scale-110 transition-transform z-10"
+                                title="Use Joker"
+                            >
+                                🃏
+                                <span className="absolute -bottom-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full border border-white">
+                                    {team.jokers}
+                                </span>
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>
@@ -253,6 +297,18 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
                 {/* Question Overlay - Appears when question is set */}
                 {currentQuestion && !spinning && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+
+                        {/* Timer Overlay */}
+                        {!showAnswer && (
+                            <div className="absolute top-4 right-4 z-60">
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center border-4 text-2xl font-bold shadow-lg bg-black/50 backdrop-blur-sm ${timeLeft <= 5 ? 'border-red-500 text-red-500 animate-pulse' :
+                                    timeLeft <= 10 ? 'border-yellow-400 text-yellow-400' : 'border-blue-400 text-white'
+                                    }`}>
+                                    {timeLeft}
+                                </div>
+                            </div>
+                        )}
+
                         <GlassCard
                             className="max-w-4xl w-full mx-4 shadow-2xl animate-scaleIn"
                             glowColor="purple"

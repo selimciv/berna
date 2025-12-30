@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
+import { speak } from '@/lib/textToSpeech';
 
 interface HangmanProps {
     vocabulary: any;
@@ -66,13 +67,7 @@ export default function Hangman({ vocabulary, level, onBack }: HangmanProps) {
 
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-    const speak = (text: string) => {
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
-        }
-    };
+
 
     return (
         <div className="h-full flex flex-col gap-4">

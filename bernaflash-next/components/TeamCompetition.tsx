@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
+import { speak } from '@/lib/textToSpeech';
 
 interface TeamCompetitionProps {
     vocabulary: any;
@@ -93,20 +94,6 @@ export default function TeamCompetition({ vocabulary, level, onBack }: TeamCompe
         // Mark card as used
         setUsedCards(new Set([...usedCards, selectedCard.cardId]));
         setSelectedCard(null);
-    };
-
-    const speak = (text: string, callback?: () => void) => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Cancel any existing speech
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.onend = () => {
-                if (callback) callback();
-            };
-            window.speechSynthesis.speak(utterance);
-        } else if (callback) {
-            callback();
-        }
     };
 
     return (

@@ -86,7 +86,6 @@ export default function RootLayout({
       >
         <Snowfall />
         <TelegramTracker />
-        <FeedbackButton />
         {children}
       </body>
     </html>

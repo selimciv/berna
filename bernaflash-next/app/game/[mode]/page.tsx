@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import TeamCompetition from '@/components/TeamCompetition';
+import DuelMode from '@/components/DuelMode';
 import WheelOfFortune from '@/components/WheelOfFortune';
 import MillionaireQuiz from '@/components/MillionaireQuiz';
 import Hangman from '@/components/Hangman';
@@ -61,7 +62,7 @@ export default function GamePage({ params }: { params: { mode: string } }) {
 
     // Prepare vocabulary for current level
     useEffect(() => {
-        if (vocabulary && selectedGameMode === 'team') {
+        if (vocabulary && (selectedGameMode === 'team' || selectedGameMode === 'duel')) {
             // Process vocabulary to create questions with points
             const levelData = vocabulary.levelData?.[selectedLevel];
             if (levelData) {
@@ -91,6 +92,7 @@ export default function GamePage({ params }: { params: { mode: string } }) {
 
     const gameModes = [
         { id: 'team', icon: '🏆', title: 'Team Competition', description: 'Compete in teams', color: 'cyan' as const },
+        { id: 'duel', icon: '⚔️', title: 'Duel Mode', description: '1v1 Speed Battle', color: 'orange' as const },
         { id: 'wheel', icon: '🎡', title: 'Wheel of Fortune', description: 'Spin to win', color: 'pink' as const },
         { id: 'millionaire', icon: '💰', title: 'Millionaire Quiz', description: 'Test your knowledge', color: 'yellow' as const },
         { id: 'hangman', icon: '🎯', title: 'Hangman', description: 'Guess the word', color: 'green' as const },
@@ -240,6 +242,15 @@ export default function GamePage({ params }: { params: { mode: string } }) {
                     {/* Team Competition Game */}
                     {selectedGameMode === 'team' && vocabulary && (
                         <TeamCompetition
+                            vocabulary={vocabulary}
+                            level={selectedLevel}
+                            onBack={() => setSelectedGameMode(null)}
+                        />
+                    )}
+
+                    {/* Duel Mode Game */}
+                    {selectedGameMode === 'duel' && vocabulary && (
+                        <DuelMode
                             vocabulary={vocabulary}
                             level={selectedLevel}
                             onBack={() => setSelectedGameMode(null)}

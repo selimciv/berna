@@ -8,6 +8,7 @@ import HomeworkReport from '@/components/HomeworkReport';
 import ParticleBackground from '@/components/ParticleBackground';
 import PremiumButton from '@/components/PremiumButton';
 import GlassCard from '@/components/GlassCard';
+import FeedbackButton from '@/components/FeedbackButton';
 
 type ModalType = 'password-control' | 'password-report' | 'homework-control' | 'homework-report' | null;
 type Theme = 'gaming' | 'space' | 'neon';
@@ -206,6 +207,7 @@ export default function LandingPage() {
       </div>
 
       {/* Password Modals */}
+      <FeedbackButton />
       {activeModal === 'password-control' && (
         <PasswordModal
           title="Ödev Kontrolü - Öğretmen Girişi"
